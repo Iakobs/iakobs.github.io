@@ -5,10 +5,86 @@
         <title><![CDATA[Jacob Ibáñez Sánchez's blog]]></title>
         <link>/blog/rss.xml</link>
         <description>RSS Feed for <![CDATA[Jacob Ibáñez Sánchez's blog]]></description>
-        <pubDate>Sun, 25 Feb 2018 21:51:25 +0000</pubDate>
+        <pubDate>Sun, 25 Feb 2018 21:52:39 +0000</pubDate>
         <generator uri="http://sysgears.com/grain/docs/latest/">Grain</generator>
         <atom:link href="/blog/rss.xml" rel="self" type="application/rss+xml" />
 
+        
+            <item>
+                <guid>/blog/posts/groovy-example/</guid>
+                <title><![CDATA[Simple (yet powerful!) groovy example for Java developers]]></title>
+                
+                <pubDate>Fri, 23 Feb 2018 10:52:00 +0000</pubDate>
+                <link><![CDATA[/blog/posts/groovy-example/]]></link>
+                <description><![CDATA[<div class="paragraph">
+<p>The intent of this article is to show Java developers how powerful, concise and declarative Groovy is with a simple example. I hope this will whet your appetite for more Groovy fun! If that&#8217;s the case, my recommendation is to take a look at the <a href="http://www.groovy-lang.org/documentation.html">official documentation</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="_the_problem">The problem</h3>
+<div class="paragraph">
+<p>I want the content of a simple csv file to be transformed to a list of maps. Each item of the list is a row of the csv transformed to a map, ignoring the first one (which contains the headers). The keys of the map are the headers of the csv and the values, the row itself. All of them, obviously, split by a given separator.</p>
+</div>
+<div class="paragraph">
+<p>This comes handy for many reasons. One of them is that this format is the same used by Groovy for returning database resultsets. As you&#8217;ll see right below, accessing data from lists and maps is very easy and intuitive with Groovy.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_solution">A solution</h3>
+<div class="paragraph">
+<p>And here, a possible groovy solution! Please try to read the code and understand it by yourself before reading the comments below. You&#8217;ll find it surprisingly&#8230;&#8203; groovy!</p>
+</div>
+<script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Whoa! That was a lot of magic! Firs of all, the approach I&#8217;ve chosen to complete the task is to add a method to the <code>java.io.File</code> class that returns the desired result. The reason why I&#8217;ve chose such an unusual approach is simple: I can do it! Well, it&#8217;s also the most obvious one, why do I have to implement such a method anywhere else? The <code>java.io.File</code> class is the perfect place to be. In Groovy, you can achieve that in multiple ways. Here we are accessing the <code>java.io.File</code> metaclass and adding the method directly, called <code>toResultSet</code>. The method implementation is declared as a Closure, which is an object that contains behaviour in favour of state. Being an object, a Closure is a first class citizen and can be passed around. You can think of it as a Java 8 lambda, but a Closure is by far better!</p>
+</li>
+<li>
+<p>Here we are accessing the delegate of the closure (the <code>java.io.File</code> instance) to check if it&#8217;s name ends with the 'csv' pattern. Note the simple quotations instead of the Java double ones. You can use both interchangeably in many cases. Using the <code>assert</code> keyword to check assumptions at runtime or make the code clearer is a common Groovy idiom.</p>
+</li>
+<li>
+<p>Guess what? you have access to all the lines of the file with a simple method! The <code>readLines</code> method returns a list of strings, being each string a line of the file. As simple as that! Groovy manages the i/o boilerplate. You&#8217;ll see that Groovy has enhanced the Java platform with a bunch of methods everywhere. You can check them <a href="http://www.groovy-lang.org/gdk.html">here</a>. The <code>with</code> method (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). It makes successive calls to an object cleaner.</p>
+</li>
+<li>
+<p>As said before, since you have direct access to the list of lines of the file, you can access directly to the <code>head</code> method, which returns the first line of a collection. Note that we are storing this first line in a variable called <code>header</code>, with the <code>def</code> keyword. In Groovy you don&#8217;t have to type the type (pun intended), the compiler will guess it for you!</p>
+</li>
+<li>
+<p>Again, we are directly accessing to the <code>tail</code> method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The <code>it</code> variable is the content of each element of the collection. Every Closure has this implicit variable, which you can rename as you wish.</p>
+</li>
+<li>
+<p>A lot of things are happening here! First of all, you&#8217;re returning something without the <code>return</code> keyword. It&#8217;s completely optional. In addition, inside of a Closure, the result of evaluating the last line is always returned. But, what are we returning? Well, we are returning a list of maps, which was our first goal! In one line you&#8217;re collecting all the lines of a csv, except the header, split by a separator, transposing its header to each element, and then collecting the result to a map. Amazing. It might look confusing at first, and you can achieve the same result in other ways, of course! But the power of Groovy lets you do such a transformation in only one line of code, and it&#8217;s absolutely readable.</p>
+</li>
+<li>
+<p>Now we have our brand new <code>toResultSet</code> method added to the <code>java.io.File</code> class, let&#8217;s use it! We create a fake csv file for that purpose. Again, using the <code>with</code> method, we are working with a new instance of a File, but never assigning the instance to a variable. We call the <code>newWriter</code> method, that returns a writer on the file, and then using the <code>withWriter</code> on said writer. All these methods are dealing themselves with the opening and closing of streams, etc. Also, you can see an example of the renaming of the default <code>it</code> variable. We are renaming <code>it</code>  to <code>wr</code>. You can see the Groovy notation for creating lists as well. A simple square bracket is enough for declaring a list. But, what kind of list? By default, Groovy creates an ArrayList.</p>
+</li>
+<li>
+<p>Now we are explicitely returning a value from a Closure, and the value we are returning is the result of our new method! Note we are passing a parameter to the method, which is the separator. If you check back the declaration of the method, you&#8217;ll see this code: <code>separator = ',' &#8594;</code>. That&#8217;s, let&#8217;s say it this way, the method signature. But not only that, we&#8217;re declaring a default value for the separator argument! Fantastic!</p>
+</li>
+<li>
+<p>Let&#8217;s check that our method is working as expected! If we take the first line of our resultset (hey! that&#8217;s an array notation for accessing a list position? yup! it certainly is!), we obtain a map with the first line of the csv file. Note the map creation notation; as with lists its simpler than Java. Square brackets surrounding key : value pairs makes the job!</p>
+</li>
+<li>
+<p>Dot notation to the rescue here! If the first line is a map, the <code>map.key</code> notation gives you access to the value associated to that key.</p>
+</li>
+<li>
+<p>What&#8217;s that asterisk here? It&#8217;s optional, but it denotes that we are accessing at all elements of the list at the same time. And since we are calling at the <code>Header2</code> key, we are retrieving all elements of the second column of the csv.</p>
+</li>
+<li>
+<p>Here, like in the previous example, we are accessing to all elements of the third column, without the asterisk (it was optional, do you remember?), and then to the third element of the third column, again with the square brackets notation.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Easy peasy lemon squeezy! Just think about the lines of code needed to achieve the same result in java. With lambdas they&#8217;re obviously decreased, but Groovy is still cleaner and more concise. I&#8217;ve skipped a lot of things and you&#8217;ve only seen the gist of Groovy, but you can easily intuit it real power.</p>
+</div>
+<div class="paragraph">
+<p>One thing you have probably noticed is that there are no imports in the above code snippet. You can paste the code in a file and run it with the groovy CLI and it will run without complains. Java automatically imports the contents in the <code>java.lang</code> package, and Groovy also import other packages, like the <code>java.io</code> one.</p>
+</div>
+<div class="paragraph">
+<p>Please, feel free to leave any comments and suggestions! Hope you liked it!</p>
+</div>
+</div>]]></description>
+            </item>
         
 
     </channel>
