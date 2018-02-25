@@ -1,0 +1,88 @@
+---
+layout: post
+title: Simple (yet powerful!) groovy example for Java developers
+subtitle: ''
+image: 'post-bg.jpg'
+date: "2018-02-23 10:52"
+categories: [groovy, java, groovy for java developers]
+author: Jacob Ibáñez Sánchez
+comments: true
+author_link: '/about.html'
+published: true
+sharing: true
+---
+
+The intent of this article is to show Java developers how powerful, concise and declarative Groovy is with a simple example. I hope this will whet your appetite for more Groovy fun! If that's the case, my recommendation is to take a look at the http://www.groovy-lang.org/documentation.html[official documentation].
+
+=== The problem
+I want the content of a simple csv file to be transformed to a list of maps. Each item of the list is a row of the csv transformed to a map, ignoring the first one (which contains the headers). The keys of the map are the headers of the csv and the values, the row itself. All of them, obviously, split by a given separator.
+
+This comes handy for many reasons. One of them is that this format is the same used by Groovy for returning database resultsets. As you'll see right below, accessing data from lists and maps is very easy and intuitive with Groovy.
+
+=== A solution
+
+And here, a possible groovy solution! Please try to read the code and understand it by yourself before reading the comments below. You'll find it surprisingly... groovy!
+
+++++
+<script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
+++++
+
+//.Listing 1 - The groovy solution
+//[source,groovy,linenums]
+//----
+// //add a new method to the File class, dynamically, accessing its metaclass
+//File.metaClass.toResultSet = { separator = ',' ->   //<1>
+//    //check if the file is a csv
+//    assert delegate.name.endsWith('csv')    //<2>
+//
+//    delegate.readLines().with {    //<3>
+//        def header = head().split(separator)    //<4>
+//        def rows = tail().collect { it.split(separator) }    //<5>
+//
+//        rows.collect { row -> [header, row].transpose().collectEntries() }    //<6>
+//    }
+//}
+//
+// //create a fake csv file for testing the code
+//def resultSet = new File('fake.csv').with {
+//    newWriter().withWriter { wr ->
+//        wr << [    //<7>
+//                ['Header1;Header2;Header3;Header4'],
+//                ['CellA1;CellB1;CellC1;CellD1'],
+//                ['CellA2;CellB2;CellC2;CellD2'],
+//                ['CellA3;CellB3;CellC3;CellD3']
+//        ].flatten().join('\n')
+//    }
+//    deleteOnExit()
+//    //call the brand new method we've just created!
+//    return toResultSet(';')    //<8>
+//}
+//
+//assert resultSet[0] == [    //<9>
+//        Header1: 'CellA1',
+//        Header2: 'CellB1',
+//        Header3: 'CellC1',
+//        Header4: 'CellD1'
+//]
+//assert resultSet[0].Header2 == 'CellB1'    //<10>
+//assert resultSet*.Header2 == ['CellB1', 'CellB2', 'CellB3']    //<11>
+//assert resultSet.Header1[2] == 'CellA3'    //<12>
+//----
+<1> Whoa! That was a lot of magic! Firs of all, the approach I've chosen to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also the most obvious one, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways. Here we are accessing the `java.io.File` metaclass and adding the method directly, called `toResultSet`. The method implementation is declared as a Closure, which is an object that contains behaviour in favour of state. Being an object, a Closure is a first class citizen and can be passed around. You can think of it as a Java 8 lambda, but a Closure is by far better!
+<2> Here we are accessing the delegate of the closure (the `java.io.File` instance) to check if it's name ends with the 'csv' pattern. Note the simple quotations instead of the Java double ones. You can use both interchangeably in many cases. Using the `assert` keyword to check assumptions at runtime or make the code clearer is a common Groovy idiom.
+<3> Guess what? you have access to all the lines of the file with a simple method! The `readLines` method returns a list of strings, being each string a line of the file. As simple as that! Groovy manages the i/o boilerplate. You'll see that Groovy has enhanced the Java platform with a bunch of methods everywhere. You can check them http://www.groovy-lang.org/gdk.html[here]. The `with` method (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). It makes successive calls to an object cleaner.
+<4> As said before, since you have direct access to the list of lines of the file, you can access directly to the `head` method, which returns the first line of a collection. Note that we are storing this first line in a variable called `header`, with the `def` keyword. In Groovy you don't have to type the type (pun intended), the compiler will guess it for you!
+<5> Again, we are directly accessing to the `tail` method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The `it` variable is the content of each element of the collection. Every Closure has this implicit variable, which you can rename as you wish.
+<6> A lot of things are happening here! First of all, you're returning something without the `return` keyword. It's completely optional. In addition, inside of a Closure, the result of evaluating the last line is always returned. But, what are we returning? Well, we are returning a list of maps, which was our first goal! In one line you're collecting all the lines of a csv, except the header, split by a separator, transposing its header to each element, and then collecting the result to a map. Amazing. It might look confusing at first, and you can achieve the same result in other ways, of course! But the power of Groovy lets you do such a transformation in only one line of code, and it's absolutely readable.
+<7> Now we have our brand new `toResultSet` method added to the `java.io.File` class, let's use it! We create a fake csv file for that purpose. Again, using the `with` method, we are working with a new instance of a File, but never assigning the instance to a variable. We call the `newWriter` method, that returns a writer on the file, and then using the `withWriter` on said writer. All these methods are dealing themselves with the opening and closing of streams, etc. Also, you can see an example of the renaming of the default `it` variable. We are renaming `it`  to `wr`. You can see the Groovy notation for creating lists as well. A simple square bracket is enough for declaring a list. But, what kind of list? By default, Groovy creates an ArrayList.
+<8> Now we are explicitely returning a value from a Closure, and the value we are returning is the result of our new method! Note we are passing a parameter to the method, which is the separator. If you check back the declaration of the method, you'll see this code: `separator = ',' ->`. That's, let's say it this way, the method signature. But not only that, we're declaring a default value for the separator argument! Fantastic!
+<9> Let's check that our method is working as expected! If we take the first line of our resultset (hey! that's an array notation for accessing a list position? yup! it certainly is!), we obtain a map with the first line of the csv file. Note the map creation notation; as with lists its simpler than Java. Square brackets surrounding key : value pairs makes the job!
+<10> Dot notation to the rescue here! If the first line is a map, the `map.key` notation gives you access to the value associated to that key.
+<11> What's that asterisk here? It's optional, but it denotes that we are accessing at all elements of the list at the same time. And since we are calling at the `Header2` key, we are retrieving all elements of the second column of the csv.
+<12> Here, like in the previous example, we are accessing to all elements of the third column, without the asterisk (it was optional, do you remember?), and then to the third element of the third column, again with the square brackets notation.
+
+Easy peasy lemon squeezy! Just think about the lines of code needed to achieve the same result in java. With lambdas they're obviously decreased, but Groovy is still cleaner and more concise. I've skipped a lot of things and you've only seen the gist of Groovy, but you can easily intuit it real power.
+
+One thing you have probably noticed is that there are no imports in the above code snippet. You can paste the code in a file and run it with the groovy CLI and it will run without complains. Java automatically imports the contents in the `java.lang` package, and Groovy also import other packages, like the `java.io` one.
+
+Please, feel free to leave any comments and suggestions! Hope you liked it!
