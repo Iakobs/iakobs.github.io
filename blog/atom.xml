@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Jacob Ibáñez Sánchez's blog]]></title>
+    <link href="/blog/atom.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2018-02-25T19:18:58Z</updated>
+    <id></id>
+
+    <generator uri="http://sysgears.com/grain/docs/latest/">Grain</generator>
+
+    
+</feed>
