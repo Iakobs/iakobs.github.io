@@ -1,0 +1,9 @@
+footer:
+  text: Copyright &copy; Jacob Ibáñez Sánchez 2018
+  social_links:
+    - link: 'https://www.twitter.com/IakobsDeSamos'
+      fontawesome_icon_class: fa-twitter
+    - link: 'https://www.linkedin.com/in/jacobibanezsanchez'
+      fontawesome_icon_class: fa-linkedin
+    - link: 'https://github.com/Iakobs'
+      fontawesome_icon_class: fa-github

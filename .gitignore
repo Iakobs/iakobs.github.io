@@ -9,25 +9,25 @@
 bin
 build
 out
-targe
-/nbprojects/private
+target
+/nbproject/private/
 /nbbuild/
 build.xml
-/nbproject
+/nbproject/
 
-#Intellij#
+# Intellij #
 .idea/
 out/
 *.iml
 *.iws
 *.ipr
 
-#Gradle#
+# Gradle #
 build/
 
-#Grain#
+# Grain #
 /.sass-cache/
-/targe/
+/target/
 
-#Github#
+# GitHub #
 .travis
