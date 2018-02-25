@@ -53,6 +53,7 @@ class GHPagesDeployer {
                 git(['checkout', workingBranch])
                 ant.delete(includeEmptyDirs: true) {
                     fileset(dir: cacheDeployDir) {
+                        exclude(name: 'CNAME')
                         exclude(name: '.git')
                     }
                 }
@@ -76,7 +77,7 @@ class GHPagesDeployer {
             String travisCommit = System.getenv('TRAVIS_COMMIT')
             String travisCommitMessage = System.getenv('TRAVIS_COMMIT_MESSAGE')
 
-            return "deployed build-${travisBuildNumber} by Travis-CI from ${travisCommit} (${travisCommitMessage})"
+            return "deployed build-${travisBuildNumber} by Travis-CI from ${travisCommit}\n(${travisCommitMessage})"
         } else {
             String hostname = System.getenv('HOSTNAME') ?: System.getenv('COMPUTERNAME')
 
