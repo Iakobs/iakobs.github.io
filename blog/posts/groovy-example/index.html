@@ -104,7 +104,41 @@
 </div>
 <script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
 <div class="paragraph">
-<p>Whoa! That was a lot of magic! Firs of all, the approach I&#8217;ve chosen to complete the task is to add a method to the <code>java.io.File</code> class that returns the desired result. The reason why I&#8217;ve chose such an unusual approach is simple: I can do it! Well, it&#8217;s also <strong>the most obvious one</strong>, why do I have to implement such a method anywhere else? The <code>java.io.File</code> class is the perfect place to be. In Groovy, you can achieve that in multiple ways.</p>
+<p>Whoa! That was a lot of magic! Firs of all, the approach I&#8217;ve chose to complete the task is to add a method to the <code>java.io.File</code> class that returns the desired result. The reason why I&#8217;ve chose such an unusual approach is simple: I can do it! Well, it&#8217;s also <strong>the most obvious one</strong>, why do I have to implement such a method anywhere else? The <code>java.io.File</code> class is the perfect place to be. In Groovy, you can achieve that in multiple ways.</p>
+</div>
+<div class="paragraph">
+<p>But first, let&#8217;s take a closer look to this code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+</pre></td>
+  <td class="code"><pre>    <span class="predefined-type">File</span> thisFile = delegate <span class="keyword">as</span> <span class="predefined-type">File</span>    <b class="conum">(1)</b>
+    <span class="keyword">def</span> allFileLines = thisFile.readLines()    <b class="conum">(2)</b>
+
+    isCsv thisFile    <b class="conum">(3)</b></pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>So many things in so little lines of code! Firstly, you can see two ways of declaring variables in Groovy; with explicit typing and without it. <strong>The first way is equals to the java way</strong>. You declare the type of the variable, its name and its value. In this case, the value is the delegate of the closure (you can see that the delegate of a closure is like the <code>self</code> object). You can see as well the type coertion here with the <code>as</code> keyword. It&#8217;s basically like java coertion but with subtles differences out of the scope of this post.</p>
+</li>
+<li>
+<p>The second way is with the <code>def</code> keyword. <strong>You don&#8217;t declare the type of the variable and the compiler can guess it for you</strong>. Does it means we can reuse the variable with several types? No! Groovy is a strong typed language, but it does the type checking at run time instead of at compile time. Well, in fact you can change that behaviour, but that&#8217;s a different kettle of fish! This variable is storing all the lines of the file by calling the <code>File.readLines()</code> method (which I think is amazing). You&#8217;ll see that <strong>Groovy has enhanced the Java platform with a bunch of methods everywhere</strong>. You can check them <a href="http://www.groovy-lang.org/gdk.html">here</a>.</p>
+</li>
+<li>
+<p>Last but not least, we have a call to a method (a Closure, actually) declared in the first three lines of the script. <strong>Can you see that the method call is practically like written English?</strong> With good naming of methods and variables and the Groovy optional parentheses when calling to methods, this is easily achieved. The <code>isCsv</code> Closure simply asserts that the file name&#8217;s ends with the <code>csv</code> pattern.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now let&#8217;s see how we can add a method to an existing class without touching that class!</p>
 </div>
 <div class="listingblock">
 <div class="title">Listing 1 - Adding the method to the File class</div>
@@ -120,15 +154,25 @@
 8
 9
 <strong>10</strong>
+11
+12
+13
+14
+15
 </pre></td>
   <td class="code"><pre><span class="comment">//add a new method to the File class, dynamically, accessing its metaclass</span>
 <span class="predefined-type">File</span>.metaClass.toResultSet = { separator = <span class="string"><span class="delimiter">'</span><span class="content">,</span><span class="delimiter">'</span></span> -&gt;   <b class="conum">(1)</b>
-    <span class="comment">//check if the file is a csv</span>
-    <span class="keyword">assert</span> delegate.name.endsWith(<span class="string"><span class="delimiter">'</span><span class="content">csv</span><span class="delimiter">'</span></span>)    <b class="conum">(2)</b>
-    delegate.readLines().with {    <b class="conum">(3)</b>
-        <span class="keyword">def</span> header = head().split(separator)    <b class="conum">(4)</b>
-        <span class="keyword">def</span> rows = tail().collect { <span class="local-variable">it</span>.split(separator) }    <b class="conum">(5)</b>
-        rows.collect { row -&gt; [header, row].transpose().collectEntries() }    <b class="conum">(6)</b>
+
+    <span class="predefined-type">File</span> thisFile = delegate <span class="keyword">as</span> <span class="predefined-type">File</span>
+    <span class="predefined-type">List</span> allFileLines = thisFile.readLines()
+
+    isCsv thisFile
+
+    allFileLines.with {   <b class="conum">(2)</b>
+        <span class="keyword">def</span> header = head().split(separator)    <b class="conum">(3)</b>
+        <span class="keyword">def</span> rows = tail().collect { <span class="local-variable">it</span>.split(separator) }    <b class="conum">(4)</b>
+
+        rows.collect { row -&gt; [header, row].transpose().collectEntries() }    <b class="conum">(5)</b>
     }
 }</pre></td>
 </tr></table></code></pre>
@@ -140,16 +184,13 @@
 <p>Here we are <strong>accessing the <code>java.io.File</code> metaclass and adding the method directly</strong>, called <code>toResultSet</code>. The method implementation is declared as a Closure, which is an object that contains behaviour in favour of state. Being an object, a Closure is a first class citizen and can be passed around. You can think of it as a Java 8 lambda, but a Closure is by far better!</p>
 </li>
 <li>
-<p>Here we are <strong>accessing the delegate of the closure (the <code>java.io.File</code> instance) to check if it&#8217;s name ends with the 'csv' pattern</strong>. Note the simple quotations instead of the Java double ones. You can use both interchangeably in many cases. Using the <code>assert</code> keyword to check assumptions at runtime or make the code clearer is a common Groovy idiom.</p>
+<p>You&#8217;ve seen before that the <code>File.readLines()</code> method reads all the lines of a file. <strong>Groovy manages the i/o boilerplate for you</strong>. The <code>with</code> method here (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). <strong>It makes successive calls to an object cleaner.</strong></p>
 </li>
 <li>
-<p>Guess what? <strong>you have access to all the lines of the file with a simple method!</strong> The <code>readLines</code> method returns a list of strings, being each string a line of the file. As simple as that! <strong>Groovy manages the i/o boilerplate</strong>. You&#8217;ll see that Groovy has enhanced the Java platform with a bunch of methods everywhere. You can check them <a href="http://www.groovy-lang.org/gdk.html">here</a>. The <code>with</code> method (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). <strong>It makes successive calls to an object cleaner.</strong></p>
+<p>As said before, since you have direct access to the list of lines of the file, you can access directly to <strong>the <code>head</code> method, which returns the first line of a collection</strong>. Note that we are storing this first line in a variable called <code>header</code>, with the <code>def</code> keyword. Remember that <strong>in Groovy you don&#8217;t have to type the type</strong> (pun intended), the compiler will guess it for you!</p>
 </li>
 <li>
-<p>As said before, since you have direct access to the list of lines of the file, you can access directly to <strong>the <code>head</code> method, which returns the first line of a collection</strong>. Note that we are storing this first line in a variable called <code>header</code>, with the <code>def</code> keyword. <strong>In Groovy you don&#8217;t have to type the type</strong> (pun intended), the compiler will guess it for you!</p>
-</li>
-<li>
-<p>Again, we are directly accessing to the <code>tail</code> method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The <code>it</code> variable is the content of each element of the collection. <strong>Every Closure has this implicit variable, which you can rename as you wish.</strong></p>
+<p>Again, we are directly accessing to the <code>tail</code> method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The <code>it</code> variable is the content of each element of the collection. <strong>Every Closure has this implicit variable, which you can rename as you wish</strong> (and please, <em>do it</em> for the sake of clarity!).</p>
 </li>
 <li>
 <p>A lot of things are happening here! First of all, <strong>you&#8217;re returning something without the <code>return</code> keyword</strong>. It&#8217;s completely optional. In addition, <strong>inside of a Closure, the result of evaluating the last line is always returned</strong>. But, what are we returning? Well, we are returning a list of maps, which was our first goal! In one line you&#8217;re collecting all the lines of a csv, except the header, split by a separator, transposing its header to each element, and then collecting the result to a map. Amazing. It might look confusing at first, and you can achieve the same result in other ways, of course! But <strong>the power of Groovy lets you do such a transformation in only one line of code</strong>, and it&#8217;s absolutely readable.</p>
