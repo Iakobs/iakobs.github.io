@@ -4,7 +4,7 @@ title: Simple (yet powerful!) groovy example for Java developers
 subtitle: ''
 image: 'post-bg.jpg'
 date: "2018-02-25 22:53"
-updated: "2018-02-26 12:43"
+updated: "2018-02-26 14:59"
 categories: [groovy, java, groovy for java developers]
 author: Jacob Ibáñez Sánchez
 comments: true
@@ -28,29 +28,51 @@ And here, a possible groovy solution! Please try to read the code and understand
 <script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
 ++++
 
-Whoa! That was a lot of magic! Firs of all, the approach I've chosen to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also *the most obvious one*, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways.
+Whoa! That was a lot of magic! Firs of all, the approach I've chose to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also *the most obvious one*, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways.
+
+But first, let's take a closer look to this code:
+
+[source,groovy,linenums]
+----
+    File thisFile = delegate as File    //<1>
+    def allFileLines = thisFile.readLines()    //<2>
+
+    isCsv thisFile    //<3>
+----
+
+<1> So many things in so little lines of code! Firstly, you can see two ways of declaring variables in Groovy; with explicit typing and without it. *The first way is equals to the java way*. You declare the type of the variable, its name and its value. In this case, the value is the delegate of the closure (you can see that the delegate of a closure is like the `self` object). You can see as well the type coertion here with the `as` keyword. It's basically like java coertion but with subtles differences out of the scope of this post.
+
+<2> The second way is with the `def` keyword. *You don't declare the type of the variable and the compiler can guess it for you*. Does it means we can reuse the variable with several types? No! Groovy is a strong typed language, but it does the type checking at run time instead of at compile time. Well, in fact you can change that behaviour, but that's a different kettle of fish! This variable is storing all the lines of the file by calling the `File.readLines()` method (which I think is amazing). You'll see that *Groovy has enhanced the Java platform with a bunch of methods everywhere*. You can check them http://www.groovy-lang.org/gdk.html[here].
+
+<3> Last but not least, we have a call to a method (a Closure, actually) declared in the first three lines of the script. *Can you see that the method call is practically like written English?* With good naming of methods and variables and the Groovy optional parentheses when calling to methods, this is easily achieved. The `isCsv` Closure simply asserts that the file name's ends with the `csv` pattern.
+
+Now let's see how we can add a method to an existing class without touching that class!
 
 .Listing 1 - Adding the method to the File class
 [source,groovy,linenums]
 ----
 //add a new method to the File class, dynamically, accessing its metaclass
 File.metaClass.toResultSet = { separator = ',' ->   //<1>
-    //check if the file is a csv
-    assert delegate.name.endsWith('csv')    //<2>
-    delegate.readLines().with {    //<3>
-        def header = head().split(separator)    //<4>
-        def rows = tail().collect { it.split(separator) }    //<5>
-        rows.collect { row -> [header, row].transpose().collectEntries() }    //<6>
+
+    File thisFile = delegate as File
+    List allFileLines = thisFile.readLines()
+
+    isCsv thisFile
+
+    allFileLines.with {   //<2>
+        def header = head().split(separator)    //<3>
+        def rows = tail().collect { it.split(separator) }    //<4>
+
+        rows.collect { row -> [header, row].transpose().collectEntries() }    //<5>
     }
 }
 ----
 
 <1> Here we are *accessing the `java.io.File` metaclass and adding the method directly*, called `toResultSet`. The method implementation is declared as a Closure, which is an object that contains behaviour in favour of state. Being an object, a Closure is a first class citizen and can be passed around. You can think of it as a Java 8 lambda, but a Closure is by far better!
-<2> Here we are *accessing the delegate of the closure (the `java.io.File` instance) to check if it's name ends with the 'csv' pattern*. Note the simple quotations instead of the Java double ones. You can use both interchangeably in many cases. Using the `assert` keyword to check assumptions at runtime or make the code clearer is a common Groovy idiom.
-<3> Guess what? *you have access to all the lines of the file with a simple method!* The `readLines` method returns a list of strings, being each string a line of the file. As simple as that! *Groovy manages the i/o boilerplate*. You'll see that Groovy has enhanced the Java platform with a bunch of methods everywhere. You can check them http://www.groovy-lang.org/gdk.html[here]. The `with` method (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). *It makes successive calls to an object cleaner.*
-<4> As said before, since you have direct access to the list of lines of the file, you can access directly to *the `head` method, which returns the first line of a collection*. Note that we are storing this first line in a variable called `header`, with the `def` keyword. *In Groovy you don't have to type the type* (pun intended), the compiler will guess it for you!
-<5> Again, we are directly accessing to the `tail` method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The `it` variable is the content of each element of the collection. *Every Closure has this implicit variable, which you can rename as you wish.*
-<6> A lot of things are happening here! First of all, *you're returning something without the `return` keyword*. It's completely optional. In addition, *inside of a Closure, the result of evaluating the last line is always returned*. But, what are we returning? Well, we are returning a list of maps, which was our first goal! In one line you're collecting all the lines of a csv, except the header, split by a separator, transposing its header to each element, and then collecting the result to a map. Amazing. It might look confusing at first, and you can achieve the same result in other ways, of course! But *the power of Groovy lets you do such a transformation in only one line of code*, and it's absolutely readable.
+<2> You've seen before that the `File.readLines()` method reads all the lines of a file. *Groovy manages the i/o boilerplate for you*. The `with` method here (available for all Groovy objects) receives a Closure as an argument with a special scope. By default, you have direct access to the caller (the list of strings in the current example). *It makes successive calls to an object cleaner.*
+<3> As said before, since you have direct access to the list of lines of the file, you can access directly to *the `head` method, which returns the first line of a collection*. Note that we are storing this first line in a variable called `header`, with the `def` keyword. Remember that *in Groovy you don't have to type the type* (pun intended), the compiler will guess it for you!
+<4> Again, we are directly accessing to the `tail` method, which returns all the elements of a collection, except the first one. We are also collecting a new list, applying a Closure that split each line with a given separator. The `it` variable is the content of each element of the collection. *Every Closure has this implicit variable, which you can rename as you wish* (and please, _do it_ for the sake of clarity!).
+<5> A lot of things are happening here! First of all, *you're returning something without the `return` keyword*. It's completely optional. In addition, *inside of a Closure, the result of evaluating the last line is always returned*. But, what are we returning? Well, we are returning a list of maps, which was our first goal! In one line you're collecting all the lines of a csv, except the header, split by a separator, transposing its header to each element, and then collecting the result to a map. Amazing. It might look confusing at first, and you can achieve the same result in other ways, of course! But *the power of Groovy lets you do such a transformation in only one line of code*, and it's absolutely readable.
 
 Now we have our brand new `toResultSet` method added to the `java.io.File` class, let's use it!
 
