@@ -33,7 +33,7 @@ features {
      * - shell - Uses command shell to execute compass.
      * - none - compass is disabled.
      */
-    compass = 'jruby'
+    compass = 'none'
 
     asciidoc {
         opts = ['source-highlighter': 'coderay']
