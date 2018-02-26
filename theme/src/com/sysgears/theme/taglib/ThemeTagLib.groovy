@@ -40,7 +40,11 @@ class ThemeTagLib {
     def renderPostDateAndAuthor = { Map post ->
         if (post.author && post.date) {
             def maybePageAuthorLink = (post.author_link) ? "<a href=\"${post.author_link}\">${post.author}</a>" : post.author
-            "Posted by " + maybePageAuthorLink + " on " + post.date.format('MMMM dd, yyyy')
+            def result = "Posted by $maybePageAuthorLink on ${post.date.format('MMMM dd, yyyy')}"
+            if (post.updated) {
+                result += "</br>(Last updated on ${post.updated.format('MMMM dd, yyyy')})"
+            }
+            result
         } else ""
     }
 

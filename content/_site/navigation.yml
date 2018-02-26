@@ -1,7 +1,7 @@
 navigation:
  brand:
-  title: Start Bootstrap
-  link: /
+  title: See the code
+  link: https://github.com/Iakobs/iakobs.github.io
  sections:
     - name: Home
       link: /

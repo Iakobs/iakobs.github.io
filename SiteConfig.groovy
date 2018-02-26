@@ -17,7 +17,7 @@ features {
      *  - none - code highlighting is disabled for the theme.
      *  - pygments - code highlighting is enabled and provided by Python Pygments.
      */
-    highlight = 'none'
+    highlight = 'pygments'
 
     /**
      * Defines the tool for Markdown documents processing. Accepts the following values:
@@ -33,7 +33,11 @@ features {
      * - shell - Uses command shell to execute compass.
      * - none - compass is disabled.
      */
-    compass = 'none'
+    compass = 'jruby'
+
+    asciidoc {
+        opts = ['source-highlighter': 'coderay']
+    }
 }
 
 /**
