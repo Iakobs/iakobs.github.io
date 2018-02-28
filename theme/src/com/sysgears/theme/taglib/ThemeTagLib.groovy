@@ -1,6 +1,7 @@
 package com.sysgears.theme.taglib
 
 import com.sysgears.grain.taglib.GrainTagLib
+import org.apache.commons.lang.StringUtils
 
 class ThemeTagLib {
 
@@ -40,11 +41,7 @@ class ThemeTagLib {
     def renderPostDateAndAuthor = { Map post ->
         if (post.author && post.date) {
             def maybePageAuthorLink = (post.author_link) ? "<a href=\"${post.author_link}\">${post.author}</a>" : post.author
-            def result = "Posted by $maybePageAuthorLink on ${post.date.format('MMMM dd, yyyy')}"
-            if (post.updated) {
-                result += "</br>(Last updated on ${post.updated.format('MMMM dd, yyyy')})"
-            }
-            result
+            "Posted by $maybePageAuthorLink on ${post.date.format('MMMM dd, yyyy')}"
         } else ""
     }
 
@@ -99,5 +96,22 @@ class ThemeTagLib {
             result += "\n<div><em>${args["desc"]}</em></div>"
         }
         result
+    }
+
+    /**
+     * Converts title by applying Title Case capitalizing convention (capitalizes all principal words).
+     *
+     * @attr title REQUIRED the title to convert
+     */
+    def titleCase = { Map attrs ->
+        if (!attrs.title) throw new IllegalArgumentException('Tag [titleCase] is missing required attribute [title]')
+
+        def nonPrincipalWords = ['a', 'an', 'and', 'as', 'at', 'but', 'by', 'en', 'for', 'if', 'in',
+                                 'of', 'on', 'or', 'the', 'to', 'v', 'v.', 'via', 'vs', 'vs.']
+
+        attrs.title.split(' ').inject(new StringBuilder()) {result, word ->
+            word in nonPrincipalWords ? result.append(word) : result.append(StringUtils.capitalize(word))
+            result.append(' ')
+        } .toString().trim()
     }
 }

@@ -40,6 +40,31 @@ features {
     }
 }
 
+// Sharing.
+sharing {
+    // Button for sharing of posts and pages on Twitter.
+    twitter {
+        share_button {
+            enabled = true
+            lang = 'en'
+        }
+    }
+    // Button for sharing of posts and pages on Facebook.
+    facebook {
+        share_button {
+            enabled = true
+            lang = 'en_US'          // locale code e.g. 'en_US', 'en_GB', etc.
+        }
+    }
+    // Button for sharing of posts and pages on Google plus one.
+    googleplus_one {
+        share_button {
+            enabled = true
+            size = 'medium'         // one of 'small', 'medium', 'standard', 'tall'
+        }
+    }
+}
+
 /**
  * A list of regular expressions that match locations of files or directories that must be completely excluded from processing.
  * These files are ignored by Grain and won't be copied to the destination directory.
@@ -190,6 +215,10 @@ blog {
      * The amount of blog posts to be displayed on a site page.
      */
     posts_per_page = 4
+}
+
+disqus {
+    short_name = 'jacobibanez'                 // the unique identifier assigned to a Disqus (http://disqus.com/) forum
 }
 
 /**
