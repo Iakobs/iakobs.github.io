@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title><![CDATA[Jacob Ibáñez Sánchez's blog]]></title>
-    <link href="/blog/atom.xml" rel="self"/>
-    <link href="/"/>
+    <link href="http://blog.jacobibanez.com/blog/atom.xml" rel="self"/>
+    <link href="http://blog.jacobibanez.com/"/>
     <updated>2018-02-26T14:59:00Z</updated>
-    <id></id>
+    <id>http://blog.jacobibanez.com</id>
 
     <generator uri="http://sysgears.com/grain/docs/latest/">Grain</generator>
 
     
         <entry>
             <title type="html"><![CDATA[Simple (yet powerful!) groovy example for Java developers]]></title>
-            <link href="/blog/posts/groovy-example/"/>
+            <link href="http://blog.jacobibanez.com/blog/posts/groovy-example/"/>
             <author>
                 <name><![CDATA[Jacob Ibáñez Sánchez]]></name>
                 
@@ -20,7 +20,7 @@
                 
             </author>
             <updated>2018-02-25T22:53:00Z</updated>
-            <id><![CDATA[/blog/posts/groovy-example/]]></id>
+            <id><![CDATA[http://blog.jacobibanez.com/blog/posts/groovy-example/]]></id>
             <content type="html"><![CDATA[<div class="paragraph">
 <p>The intent of this article is to show Java developers how <strong>powerful, concise and declarative Groovy is</strong> with a simple example. I hope this will whet your appetite for more Groovy fun! If that&#8217;s the case, my recommendation is to take a look at the <a href="http://www.groovy-lang.org/documentation.html">official documentation</a>.</p>
 </div>

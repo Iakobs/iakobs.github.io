@@ -3,19 +3,19 @@
 
     <channel>
         <title><![CDATA[Jacob Ibáñez Sánchez's blog]]></title>
-        <link>/blog/rss.xml</link>
+        <link>http://blog.jacobibanez.com/blog/rss.xml</link>
         <description>RSS Feed for <![CDATA[Jacob Ibáñez Sánchez's blog]]></description>
         <pubDate>Mon, 26 Feb 2018 14:59:00 +0000</pubDate>
         <generator uri="http://sysgears.com/grain/docs/latest/">Grain</generator>
-        <atom:link href="/blog/rss.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://blog.jacobibanez.com/blog/rss.xml" rel="self" type="application/rss+xml" />
 
         
             <item>
-                <guid>/blog/posts/groovy-example/</guid>
+                <guid>http://blog.jacobibanez.com/blog/posts/groovy-example/</guid>
                 <title><![CDATA[Simple (yet powerful!) groovy example for Java developers]]></title>
                 
                 <pubDate>Sun, 25 Feb 2018 22:53:00 +0000</pubDate>
-                <link><![CDATA[/blog/posts/groovy-example/]]></link>
+                <link><![CDATA[http://blog.jacobibanez.com/blog/posts/groovy-example/]]></link>
                 <description><![CDATA[<div class="paragraph">
 <p>The intent of this article is to show Java developers how <strong>powerful, concise and declarative Groovy is</strong> with a simple example. I hope this will whet your appetite for more Groovy fun! If that&#8217;s the case, my recommendation is to take a look at the <a href="http://www.groovy-lang.org/documentation.html">official documentation</a>.</p>
 </div>

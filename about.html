@@ -139,11 +139,31 @@ enim modi! Et.
                         </li>
                     
                 </ul>
-                <p class="copyright text-muted">Copyright &copy; Jacob Ibáñez Sánchez 2018</p>
+                <p class="copyright text-muted">
+                    Copyright &copy; Jacob Ibáñez Sánchez - 2018 -
+                    <span class="credit">Powered by <a href="http://sysgears.com/grain/">Grain</a></span>
+                </p>
             </div>
         </div>
     </div>
 </footer>
+
+        <!-- Load script if disquss comments are enabled and `page.comments` is either empty (index) or set to true -->
+
+<script type="text/javascript">
+    var disqus_shortname = "jacobibanez";
+    
+        // As `page.comments` is empty, we must be on the index page.
+        var disqus_script = 'count.js';
+    
+    (function () {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
 
     </body>
 </html>
