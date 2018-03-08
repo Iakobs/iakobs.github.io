@@ -15,6 +15,8 @@ author = 'Jacob Ibáñez Sánchez'
 meta_description = 'A blog for newbie developers'
 github_repository = 'https://github.com/iakobs/iakobs.github.io'
 
+google_analytics_tracking_id = 'UA-82806387-1'
+
 /**
  * Theme features management.
  */
