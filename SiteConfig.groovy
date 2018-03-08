@@ -9,6 +9,13 @@ resource_mapper = new ResourceMapper(site).map
 tag_libs = [ThemeTagLib]
 
 /**
+ * Site configuration.
+ */
+author = 'Jacob Ibáñez Sánchez'
+meta_description = 'A blog for newbie developers'
+github_repository = 'https://github.com/iakobs/iakobs.github.io'
+
+/**
  * Theme features management.
  */
 features {
@@ -102,7 +109,7 @@ environments {
         /**
          * Base URL for the site. This value will be automatically prepended to any asset path of the theme.
          */
-        url = ''
+        url = 'http://blog.jacobibanez.com'
 
         /**
          * Should posts with "published = false" be processed.
