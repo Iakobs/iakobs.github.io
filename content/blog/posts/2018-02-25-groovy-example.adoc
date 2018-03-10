@@ -11,6 +11,8 @@ comments: true
 author_link: '/about.html'
 published: true
 sharing: true
+description: Groovy example for java developers
+keywords: 'groovy, example, java, developers'
 ---
 
 The intent of this article is to show Java developers how *powerful, concise and declarative Groovy is* with a simple example. I hope this will whet your appetite for more Groovy fun! If that's the case, my recommendation is to take a look at the http://www.groovy-lang.org/documentation.html[official documentation].
@@ -28,7 +30,7 @@ And here, a possible groovy solution! Please try to read the code and understand
 <script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
 ++++
 
-Whoa! That was a lot of magic! Firs of all, the approach I've chose to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also *the most obvious one*, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways.
+Whoa! That was a lot of magic! First of all, the approach I've chose to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also *the most obvious one*, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways.
 
 But first, let's take a closer look to this code:
 
