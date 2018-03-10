@@ -43,7 +43,7 @@
 </div>
 <script src="https://gist.github.com/Iakobs/08a5ecd7f8831849b29d8f227b11676f.js"></script>
 <div class="paragraph">
-<p>Whoa! That was a lot of magic! Firs of all, the approach I&#8217;ve chose to complete the task is to add a method to the <code>java.io.File</code> class that returns the desired result. The reason why I&#8217;ve chose such an unusual approach is simple: I can do it! Well, it&#8217;s also <strong>the most obvious one</strong>, why do I have to implement such a method anywhere else? The <code>java.io.File</code> class is the perfect place to be. In Groovy, you can achieve that in multiple ways.</p>
+<p>Whoa! That was a lot of magic! First of all, the approach I&#8217;ve chose to complete the task is to add a method to the <code>java.io.File</code> class that returns the desired result. The reason why I&#8217;ve chose such an unusual approach is simple: I can do it! Well, it&#8217;s also <strong>the most obvious one</strong>, why do I have to implement such a method anywhere else? The <code>java.io.File</code> class is the perfect place to be. In Groovy, you can achieve that in multiple ways.</p>
 </div>
 <div class="paragraph">
 <p>But first, let&#8217;s take a closer look to this code:</p>
