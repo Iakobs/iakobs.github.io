@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Simple (yet powerful!) groovy example for Java developers
+title: Groovy example for Java developers
 subtitle: ''
 image: 'post-bg.jpg'
 date: "2018-02-25 22:53"
@@ -11,18 +11,19 @@ comments: true
 author_link: '/about.html'
 published: true
 sharing: true
-description: Groovy example for java developers
-keywords: 'groovy, example, java, developers'
+description: 'Learn how to improve your skills on the JVM in only 44 lines of code.'
+keywords: 'groovy, example, java, developers, metaprogramming, closures'
 ---
 
 The intent of this article is to show Java developers how *powerful, concise and declarative Groovy is* with a simple example. I hope this will whet your appetite for more Groovy fun! If that's the case, my recommendation is to take a look at the http://www.groovy-lang.org/documentation.html[official documentation].
 
 == The problem
+
 I want the content of a simple csv file to be transformed to a list of maps. Each item of the list is a row of the csv transformed to a map, ignoring the first one (which contains the headers). The keys of the map are the headers of the csv and the values, the row itself. All of them, obviously, split by a given separator.
 
 This comes handy for many reasons. One of them is that this format is the same used by Groovy for returning database resultsets. As you'll see right below, *accessing data from lists and maps is very easy and intuitive with Groovy*.
 
-== A solution
+== A Groovy solution
 
 And here, a possible groovy solution! Please try to read the code and understand it by yourself before reading the comments below. You'll find it surprisingly... groovy!
 
@@ -31,6 +32,8 @@ And here, a possible groovy solution! Please try to read the code and understand
 ++++
 
 Whoa! That was a lot of magic! First of all, the approach I've chose to complete the task is to add a method to the `java.io.File` class that returns the desired result. The reason why I've chose such an unusual approach is simple: I can do it! Well, it's also *the most obvious one*, why do I have to implement such a method anywhere else? The `java.io.File` class is the perfect place to be. In Groovy, you can achieve that in multiple ways.
+
+=== A taste of Groovy
 
 But first, let's take a closer look to this code:
 
@@ -47,6 +50,8 @@ But first, let's take a closer look to this code:
 <2> The second way is with the `def` keyword. *You don't declare the type of the variable and the compiler can guess it for you*. Does it means we can reuse the variable with several types? No! Groovy is a strong typed language, but it does the type checking at run time instead of at compile time. Well, in fact you can change that behaviour, but that's a different kettle of fish! This variable is storing all the lines of the file by calling the `File.readLines()` method (which I think is amazing). You'll see that *Groovy has enhanced the Java platform with a bunch of methods everywhere*. You can check them http://www.groovy-lang.org/gdk.html[here].
 
 <3> Last but not least, we have a call to a method (a Closure, actually) declared in the first three lines of the script. *Can you see that the method call is practically like written English?* With good naming of methods and variables and the Groovy optional parentheses when calling to methods, this is easily achieved. The `isCsv` Closure simply asserts that the file name's ends with the `csv` pattern.
+
+=== The Glory of Metaprogramming
 
 Now let's see how we can add a method to an existing class without touching that class!
 
@@ -99,6 +104,8 @@ def resultSet = new File('fake.csv').with {
 
 <1> We create a fake csv file for that purpose. Again, using the `with` method, we are working with a new instance of a File, but *never assigning the instance to a variable*. We call the `newWriter` method, that returns a writer on the file, and then using the `withWriter` on said writer. *All these methods are dealing themselves with the opening and closing of streams*, etc. Also, you can see an example of the renaming of the default `it` variable. We are renaming `it`  to `writer`. You can see the Groovy notation for creating lists as well. A simple pair of square brackets are enough for declaring a list. But, what kind of list? By default, Groovy creates an ArrayList.
 <2> Now we are explicitely returning a value from a Closure, and the value we are returning is the result of our new method! Note we are passing a parameter to the method, which is the separator. If you check back the declaration of the method, you'll see this code: `separator = ',' ->`. That's, let's say it this way, the method signature. But not only that, *we're declaring a default value for the separator argument!* Fantastic!
+
+=== Testing our work
 
 Let's check that our method is working as expected!
 
